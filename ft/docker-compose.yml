@@ -1,0 +1,14 @@
+cassandra:
+  image: michaelmcfadyen/docker-gradle-demo-cassandra
+  ports:
+    - "9042:9042"
+    - "9160"
+
+app:
+  image: test/gs-spring-boot-docker
+  ports:
+    - "8080:8080"
+  links:
+    - cassandra
+  environment:
+    - JAVA_OPTS=-Dcassandra.contactpoints=cassandra -Dcassandra.port=9042 -Dcassandra.keyspace=demo -Dserver.port=8080

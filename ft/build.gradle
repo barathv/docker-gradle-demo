@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("com.avast.gradle:docker-compose-gradle-plugin:0.4.5")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'docker-compose'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    testCompile("com.google.inject:guice:4.0")
+    testCompile("org.apache.httpcomponents:httpclient:4.5.2")
+    testCompile("commons-logging:commons-logging:1.2")
+    testCompile("com.fasterxml.jackson.core:jackson-databind:2.7.4")
+    testCompile("com.datastax.cassandra:cassandra-driver-core:2.0.2")
+    testCompile("info.cukes:cucumber-java:1.2.3")
+    testCompile("info.cukes:cucumber-guice:1.2.3")
+    testCompile("info.cukes:cucumber-junit:1.2.3")
+    testCompile("junit:junit:4.12")
+}
+
+dockerCompose.isRequiredBy(test)
+
+dockerCompose {
+}
+
+test.doFirst{
+    dockerCompose.exposeAsSystemProperties(test)
+
+
+    systemProperty 'app.hostname', 'http://localhost'
+    systemProperty 'app.port', 8080
+    systemProperty 'cassandra.host', 'localhost'
+    systemProperty 'cassandra.port', 9042
+    systemProperty 'cassandra.keyspace', 'demo'
+}
+test {
+    testLogging.showStandardStreams = true
+    systemProperties System.getProperties()
+}

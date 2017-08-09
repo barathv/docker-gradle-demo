@@ -1,0 +1,4 @@
+rootProject.name = 'docker-gradle-demo'
+
+include 'app'
+include 'ft'
